@@ -1,4 +1,4 @@
-name: Update PR Title with Linear Issue ID
+name: Update PR title & assignee
 
 on:
   pull_request:
