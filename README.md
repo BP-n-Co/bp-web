@@ -36,3 +36,27 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## Docker
+
+This project includes Docker support for easy deployment.
+
+### Building the Docker image
+
+```bash
+docker build -t bp-web .
+```
+
+### Running the Docker container
+
+```bash
+docker run -p 3000:3000 bp-web
+```
+
+### Using Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+This will build and run the application in detached mode, exposing it on port 3000.
