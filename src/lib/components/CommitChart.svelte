@@ -17,7 +17,7 @@
     // Prepare data
     const dates = commits.map(commit => new Date(commit.created_date).toLocaleDateString());
     const linesAdded = commits.map(commit => commit.lines_added);
-    const linesDeleted = commits.map(commit => commit.lines_deleted);
+    const linesDeleted = commits.map(commit => -commit.lines_deleted); // Negative values for deleted lines
     
     // Destroy existing chart if it exists
     if (chart) {
@@ -26,23 +26,19 @@
     
     // Create new chart
     chart = new Chart(chartContainer, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: dates,
         datasets: [
           {
             label: 'Lines Added',
             data: linesAdded,
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            tension: 0.1,
+            backgroundColor: 'rgba(75, 192, 192, 0.8)',
           },
           {
             label: 'Lines Deleted',
             data: linesDeleted,
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            tension: 0.1,
+            backgroundColor: 'rgba(255, 99, 132, 0.8)',
           }
         ]
       },
@@ -58,14 +54,16 @@
             title: {
               display: true,
               text: 'Date'
-            }
+            },
+            stacked: false
           },
           y: {
             title: {
               display: true,
               text: 'Lines Changed'
             },
-            beginAtZero: true
+            beginAtZero: true,
+            grace: '10%' // Add some padding for better visibility
           }
         },
         plugins: {
@@ -76,7 +74,14 @@
               },
               label: function(context) {
                 const datasetLabel = context.dataset.label || '';
-                const value = context.parsed.y;
+                let value = context.parsed.y;
+                
+                // Show absolute value for deleted lines in tooltip
+                if (datasetLabel === 'Lines Deleted') {
+                  value = Math.abs(value);
+                  return `${datasetLabel}: ${value}`;
+                }
+                
                 return `${datasetLabel}: ${value}`;
               }
             }
