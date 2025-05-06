@@ -34,11 +34,17 @@
             label: 'Lines Added',
             data: linesAdded,
             backgroundColor: 'rgba(75, 192, 192, 0.8)',
+            categoryPercentage: 0.8,
+            barPercentage: 1.0,
+            order: 2,
           },
           {
             label: 'Lines Deleted',
             data: linesDeleted,
             backgroundColor: 'rgba(255, 99, 132, 0.8)',
+            categoryPercentage: 0.8,
+            barPercentage: 1.0,
+            order: 1,
           }
         ]
       },
@@ -55,7 +61,7 @@
               display: true,
               text: 'Date'
             },
-            stacked: false
+            stacked: true
           },
           y: {
             title: {
@@ -63,7 +69,8 @@
               text: 'Lines Changed'
             },
             beginAtZero: true,
-            grace: '10%' // Add some padding for better visibility
+            grace: '10%', // Add some padding for better visibility
+            stacked: false
           }
         },
         plugins: {
