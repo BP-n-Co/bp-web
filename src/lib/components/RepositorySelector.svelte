@@ -1,17 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  
-  export let repositoryId: string | null = null;
-  export let repositories: Array<{ id: string, name: string }> = [];
-  export let loading: boolean = false;
+  import { preventDefault } from 'svelte/legacy';
 
-  let showModal = false;
-  let newRepositoryName = '';
-  const dispatch = createEventDispatcher();
+  interface Props {
+    repositoryId?: string | null;
+    repositories?: Array<{ id: string, name: string }>;
+    loading?: boolean;
+    onSelect?: (value: string) => void;
+    onAdd?: (repoName: string) => void;
+  }
+
+  let { repositoryId = null, repositories = [], loading = false, onSelect, onAdd }: Props = $props();
+
+  let showModal = $state(false);
+  let newRepositoryName = $state('');
 
   function selectRepository(event: Event) {
     const select = event.target as HTMLSelectElement;
-    dispatch('select', select.value);
+    onSelect?.(select.value);
   }
 
   function toggleModal() {
@@ -23,7 +28,7 @@
 
   function submitRepository() {
     if (newRepositoryName.trim()) {
-      dispatch('add', newRepositoryName.trim());
+      onAdd?.(newRepositoryName.trim());
       toggleModal();
     }
   }
@@ -34,7 +39,7 @@
     <div class="flex-grow">
       <select 
         class="w-full p-2 border rounded" 
-        on:change={selectRepository} 
+        onchange={selectRepository} 
         disabled={loading}
         value={repositoryId || ''}
       >
@@ -46,7 +51,7 @@
     </div>
     <button 
       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      on:click={toggleModal}
+      onclick={toggleModal}
       disabled={loading}
     >
       Add Repository
@@ -58,7 +63,7 @@
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-full max-w-md">
       <h2 class="text-xl font-bold mb-4">Add New Repository</h2>
-      <form on:submit|preventDefault={submitRepository}>
+      <form onsubmit={preventDefault(submitRepository)}>
         <div class="mb-4">
           <label class="block mb-2" for="repo-name">Repository Name (domain/name)</label>
           <input
@@ -74,7 +79,7 @@
           <button 
             type="button"
             class="px-4 py-2 border rounded hover:bg-gray-100"
-            on:click={toggleModal}
+            onclick={toggleModal}
           >
             Cancel
           </button>

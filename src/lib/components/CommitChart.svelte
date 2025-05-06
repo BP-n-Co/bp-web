@@ -2,9 +2,13 @@
   import { onMount, onDestroy } from 'svelte';
   import Chart from 'chart.js/auto';
   
-  export let commits: Array<{ lines_added: number, lines_deleted: number, created_date: string }> = [];
+  interface Props {
+    commits?: Array<{ lines_added: number, lines_deleted: number, created_date: string }>;
+  }
+
+  let { commits = [] }: Props = $props();
   
-  let chartContainer: HTMLCanvasElement;
+  let chartContainer = $state<HTMLCanvasElement | undefined>(undefined);
   let chart: Chart | null = null;
   
   function createChart() {
@@ -82,12 +86,14 @@
     });
   }
   
-  $: if (commits && chartContainer) {
-    createChart();
-  }
+  $effect(() => {
+    if (commits && chartContainer) {
+      createChart();
+    }
+  });
   
   onMount(() => {
-    if (commits.length > 0) {
+    if (commits.length > 0 && chartContainer) {
       createChart();
     }
   });

@@ -5,11 +5,11 @@
   import { fetchRepositories, fetchCommits, addRepository } from '$lib/api/repositories';
   import type { Repository, Commit } from '$lib/api/repositories';
 
-  let repositories: Repository[] = [];
-  let commits: Commit[] = [];
-  let selectedRepositoryId: string | null = null;
-  let loading = false;
-  let error: string | null = null;
+  let repositories: Repository[] = $state([]);
+  let commits: Commit[] = $state([]);
+  let selectedRepositoryId: string | null = $state(null);
+  let loading = $state(false);
+  let error: string | null = $state(null);
 
   // Load repositories on mount
   onMount(async () => {
@@ -25,18 +25,18 @@
   });
 
   // Handle repository selection
-  async function handleRepositorySelect(event: CustomEvent<string>) {
-    selectedRepositoryId = event.detail;
+  async function handleRepositorySelect(repoId: string) {
+    selectedRepositoryId = repoId;
     if (selectedRepositoryId) {
       await loadCommits(selectedRepositoryId);
     }
   }
 
   // Handle repository addition
-  async function handleRepositoryAdd(event: CustomEvent<string>) {
+  async function handleRepositoryAdd(repoName: string) {
     try {
       loading = true;
-      const newRepo = await addRepository(event.detail);
+      const newRepo = await addRepository(repoName);
       repositories = [...repositories, newRepo];
       selectedRepositoryId = newRepo.id;
       await loadCommits(newRepo.id);
@@ -70,7 +70,7 @@
       <p>{error}</p>
       <button 
         class="underline ml-2"
-        on:click={() => error = null}
+        onclick={() => error = null}
       >
         Dismiss
       </button>
@@ -82,8 +82,8 @@
       repositories={repositories}
       repositoryId={selectedRepositoryId}
       loading={loading}
-      on:select={handleRepositorySelect}
-      on:add={handleRepositoryAdd}
+      onSelect={handleRepositorySelect}
+      onAdd={handleRepositoryAdd}
     />
   </div>
   
