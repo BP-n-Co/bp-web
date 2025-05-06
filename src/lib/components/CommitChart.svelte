@@ -31,7 +31,6 @@
             data: linesAdded,
             borderColor: 'rgb(75, 192, 192)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            yAxisID: 'y-axis-1',
             tension: 0.1,
           },
           {
@@ -39,7 +38,6 @@
             data: linesDeleted,
             borderColor: 'rgb(255, 99, 132)',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            yAxisID: 'y-axis-2',
             tension: 0.1,
           }
         ]
@@ -47,6 +45,10 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
         scales: {
           x: {
             title: {
@@ -54,28 +56,25 @@
               text: 'Date'
             }
           },
-          'y-axis-1': {
-            type: 'linear',
-            display: true,
-            position: 'left',
+          y: {
             title: {
               display: true,
-              text: 'Lines Added'
+              text: 'Lines Changed'
             },
-            grid: {
-              drawOnChartArea: false
-            }
-          },
-          'y-axis-2': {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            title: {
-              display: true,
-              text: 'Lines Deleted'
-            },
-            grid: {
-              drawOnChartArea: false
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: function(context) {
+                return context[0].label;
+              },
+              label: function(context) {
+                const datasetLabel = context.dataset.label || '';
+                const value = context.parsed.y;
+                return `${datasetLabel}: ${value}`;
+              }
             }
           }
         }
